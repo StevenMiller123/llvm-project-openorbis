@@ -206,6 +206,62 @@ macro(detect_target_arch)
   endif()
 endmacro()
 
+function(get_compiler_rt_root_source_dir ROOT_DIR_VAR)
+  # Compute the path to the root of the Compiler-RT source tree
+  # regardless of how the project was configured.
+  #
+  # This function is useful because using `${CMAKE_SOURCE_DIR}`
+  # is error prone due to the numerous ways Compiler-RT can be
+  # configured.
+  #
+  # `ROOT_DIR_VAR` - the name of the variable to write the result to.
+  #
+  # TODO(dliew): When CMake min version is 3.17 or newer use
+  # `CMAKE_CURRENT_FUNCTION_LIST_DIR` instead.
+  if ("${ROOT_DIR_VAR}" STREQUAL "")
+    message(FATAL_ERROR "ROOT_DIR_VAR cannot be empty")
+  endif()
+
+  # Compiler-rt supports different source root paths.
+  # Handle each case here.
+  set(PATH_TO_COMPILER_RT_SOURCE_ROOT "")
+  if (DEFINED CompilerRTBuiltins_SOURCE_DIR)
+    # Compiler-RT Builtins standalone build.
+    # `llvm-project/compiler-rt/lib/builtins`
+    set(PATH_TO_COMPILER_RT_SOURCE_ROOT "${CompilerRTBuiltins_SOURCE_DIR}/../../")
+  elseif (DEFINED CompilerRTCRT_SOURCE_DIR)
+    # Compiler-RT CRT standalone build.
+    # `llvm-project/compiler-rt/lib/crt`
+    set(PATH_TO_COMPILER_RT_SOURCE_ROOT "${CompilerRTCRT_SOURCE_DIR}/../../")
+  elseif(DEFINED CompilerRT_SOURCE_DIR)
+    # Compiler-RT standalone build.
+    # `llvm-project/compiler-rt`
+    set(PATH_TO_COMPILER_RT_SOURCE_ROOT "${CompilerRT_SOURCE_DIR}")
+  elseif (EXISTS "${CMAKE_SOURCE_DIR}/../compiler-rt")
+    # In tree build with LLVM as the root project.
+    # See `llvm-project/projects/`.
+    # Assumes monorepo layout.
+    set(PATH_TO_COMPILER_RT_SOURCE_ROOT "${CMAKE_SOURCE_DIR}/../compiler-rt")
+  else()
+    message(FATAL_ERROR "Unhandled Compiler-RT source root configuration.")
+  endif()
+
+  get_filename_component(ROOT_DIR "${PATH_TO_COMPILER_RT_SOURCE_ROOT}" ABSOLUTE)
+  if (NOT EXISTS "${ROOT_DIR}")
+    message(FATAL_ERROR "Path \"${ROOT_DIR}\" doesn't exist")
+  endif()
+
+  # Sanity check: Make sure we can locate the current source file via the
+  # computed path.
+  set(PATH_TO_CURRENT_FILE "${ROOT_DIR}/cmake/Modules/CompilerRTUtils.cmake")
+  if (NOT EXISTS "${PATH_TO_CURRENT_FILE}")
+    message(FATAL_ERROR "Could not find \"${PATH_TO_CURRENT_FILE}\"")
+  endif()
+
+  set("${ROOT_DIR_VAR}" "${ROOT_DIR}" PARENT_SCOPE)
+endfunction()
+
+
 macro(load_llvm_config)
   if (LLVM_CONFIG_PATH AND NOT LLVM_CMAKE_DIR)
     message(WARNING
