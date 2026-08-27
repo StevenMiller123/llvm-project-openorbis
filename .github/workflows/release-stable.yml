@@ -23,11 +23,11 @@ jobs:
     - name: Fetch toolchain headers
       uses: actions/checkout@v3
       with:
-        repository: OpenOrbis/OpenOrbis-PS4-Toolchain
+        repository: StevenMiller123/OpenOrbis-PS4-Toolchain
         path: OpenOrbis-PS4-Toolchain
 
     - name: Fetch musl
-      run: curl -sL https://github.com/OpenOrbis/musl/releases/latest/download/musl.tar.gz | tar xz -C ./OpenOrbis-PS4-Toolchain
+      run: curl -sL https://github.com/StevenMiller123/musl-openorbis/releases/latest/download/musl.tar.gz | tar xz -C ./OpenOrbis-PS4-Toolchain
 
     - name: Build compiler-rt
       run: |
