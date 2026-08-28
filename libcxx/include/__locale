@@ -13,6 +13,9 @@
 #ifdef __FreeBSD__
 #define REMOVED_FREEBSD __FreeBSD__
 #undef __FreeBSD__
+#include <support/xlocale/__nop_locale_mgmt.h>
+#include <support/xlocale/__posix_l_fallback.h>
+#include <support/xlocale/__strtonum_fallback.h>
 #endif
 
 #include <__config>
