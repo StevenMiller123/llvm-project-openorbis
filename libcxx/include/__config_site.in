@@ -9,8 +9,6 @@
 #ifndef _LIBCPP_CONFIG_SITE
 #define _LIBCPP_CONFIG_SITE
 
-#undef __FreeBSD__
-
 #cmakedefine _LIBCPP_ABI_VERSION @_LIBCPP_ABI_VERSION@
 #cmakedefine _LIBCPP_ABI_UNSTABLE
 #cmakedefine _LIBCPP_ABI_FORCE_ITANIUM
