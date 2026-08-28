@@ -30,8 +30,8 @@
 # include <support/solaris/xlocale.h>
 #elif defined(_NEWLIB_VERSION)
 # include <support/newlib/xlocale.h>
-#elif (defined(__APPLE__)      || (defined(__FreeBSD__) && !defined(PS4)) \
-    || defined(__EMSCRIPTEN__) || defined(__IBMCPP__))
+#elif ((defined(__APPLE__)      || defined(__FreeBSD__) \
+     || defined(__EMSCRIPTEN__) || defined(__IBMCPP__)) && !defined(PS4))
 # include <xlocale.h>
 #elif defined(__Fuchsia__)
 # include <support/fuchsia/xlocale.h>
