@@ -42,12 +42,13 @@
 
 // Since Linux 4.5 and FreeBSD 13, but the Linux libc wrapper is only provided
 // by glibc >= 2.27, musl, and Bionic.
-#if _LIBCPP_GLIBC_PREREQ(2, 27) || _LIBCPP_HAS_MUSL_LIBC || defined(__FreeBSD__) ||                                    \
-    (defined(__BIONIC__) && __ANDROID_API__ >= 34)
+#if (_LIBCPP_GLIBC_PREREQ(2, 27) || _LIBCPP_HAS_MUSL_LIBC || defined(__FreeBSD__) ||                                   \
+     (defined(__BIONIC__) && __ANDROID_API__ >= 34)) &&                                                                \
+    !defined(PS4)
 #  define _LIBCPP_FILESYSTEM_USE_COPY_FILE_RANGE
 #endif
 
-#if __has_include(<sys/sendfile.h>)
+#if __has_include(<sys/sendfile.h>) && !defined(PS4)
 #  include <sys/sendfile.h>
 #  define _LIBCPP_FILESYSTEM_USE_SENDFILE
 #elif defined(__APPLE__) || __has_include(<copyfile.h>)
